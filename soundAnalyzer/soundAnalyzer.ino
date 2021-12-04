@@ -80,15 +80,22 @@ void loop() {
   }
 
   switch (soundAnalyzeMode) {
-    case VU_MODE: sendVolumeUnitData(); break;
+    case VU_MODE:
+      sendVolumeUnitData();
+      break;
     case FREQ_MODE_SYMMETRICAL:
     case FREQ_MODE_THREE_STRIPES:
     case FREQ_MODE_ONE_STRIPE:
       sendFreqBrightnessData();
       break;
-    case FREQ_MODE_SPECTRE: sendFreqSpectreData(); break;
-    case COLOR_MODE: sendColorMode(); break;
-    default: break;
+    case FREQ_MODE_SPECTRE:
+      sendFreqSpectreData();
+      break;
+    case COLOR_MODE:
+      sendColorMode();
+      break;
+    default:
+      break;
   }
 }
 
@@ -106,7 +113,7 @@ void sendFreqBrightnessData() {
   String brightnessString = (String)freqBrightness[0] + "#" + (String)freqBrightness[1] + "#" + (String)freqBrightness[2];
 
   //Serial.println(brightnessString);
-    Serial.println("$" + (String)soundAnalyzeMode + "#" + brightnessString + ";");
+  Serial.println("$" + (String)soundAnalyzeMode + "#" + brightnessString + ";");
   Serial1.print("$" + (String)soundAnalyzeMode + "#" + brightnessString + ";");
   //  Serial1.print("$" + brightnessString + ";");
 }
@@ -117,17 +124,17 @@ void sendFreqSpectreData() {
   int maxFreq = (int)floor(maxFrequencyValue_f);
 
   String spectreString =
-    (String)freq_f[0] + "#" + (String)freq_f[1] + "#" + (String)freq_f[2] + "#" +
-    (String)freq_f[3] + "#" + (String)freq_f[4] + "#" + (String)freq_f[5] + "#" +
-    (String)freq_f[6] + "#" + (String)freq_f[7] + "#" + (String)freq_f[8] + "#" +
-    (String)freq_f[9] + "#" + (String)freq_f[10] + "#" + (String)freq_f[11] + "#" +
-    (String)freq_f[12] + "#" + (String)freq_f[13] + "#" + (String)freq_f[14] + "#" +
-    (String)freq_f[15] + "#" + (String)freq_f[16] + "#" + (String)freq_f[17] + "#" +
-    (String)freq_f[18] + "#" + (String)freq_f[19] + "#" + (String)freq_f[20] + "#" +
-    (String)freq_f[21] + "#" + (String)freq_f[22] + "#" + (String)freq_f[23] + "#" +
-    (String)freq_f[24] + "#" + (String)freq_f[25] + "#" + (String)freq_f[26] + "#" +
-    (String)freq_f[27] + "#" + (String)freq_f[28] + "#" + (String)freq_f[29] + "#" +
-    (String)freq_f[30] + "#" + (String)freq_f[31] + "#" + (String)maxFreq;
+      (String)freq_f[0] + "#" + (String)freq_f[1] + "#" + (String)freq_f[2] + "#" +
+      (String)freq_f[3] + "#" + (String)freq_f[4] + "#" + (String)freq_f[5] + "#" +
+      (String)freq_f[6] + "#" + (String)freq_f[7] + "#" + (String)freq_f[8] + "#" +
+      (String)freq_f[9] + "#" + (String)freq_f[10] + "#" + (String)freq_f[11] + "#" +
+      (String)freq_f[12] + "#" + (String)freq_f[13] + "#" + (String)freq_f[14] + "#" +
+      (String)freq_f[15] + "#" + (String)freq_f[16] + "#" + (String)freq_f[17] + "#" +
+      (String)freq_f[18] + "#" + (String)freq_f[19] + "#" + (String)freq_f[20] + "#" +
+      (String)freq_f[21] + "#" + (String)freq_f[22] + "#" + (String)freq_f[23] + "#" +
+      (String)freq_f[24] + "#" + (String)freq_f[25] + "#" + (String)freq_f[26] + "#" +
+      (String)freq_f[27] + "#" + (String)freq_f[28] + "#" + (String)freq_f[29] + "#" +
+      (String)freq_f[30] + "#" + (String)freq_f[31] + "#" + (String)maxFreq;
 
   //Serial.println(spectreString);
   //Serial.println("$" + (String)soundAnalyzeMode + "#" + spectreString + ";");
@@ -145,9 +152,10 @@ int getStaticSoundVolumeValue() {
   int maxLevel = 100;
   byte Rlenght = 0;
 
-  for (int i = 0; i < VU_SAMPLE_COUNT; i++) {                                   // делаем 100 измерений
-    RcurrentLevel = analogRead(SOUND_R);                            // с правого
-    if (RsoundLevel < RcurrentLevel) RsoundLevel = RcurrentLevel;   // ищем максимальное
+  for (int i = 0; i < VU_SAMPLE_COUNT; i++) { // делаем 100 измерений
+    RcurrentLevel = analogRead(SOUND_R);      // с правого
+    if (RsoundLevel < RcurrentLevel)
+      RsoundLevel = RcurrentLevel; // ищем максимальное
   }
 
   RsoundLevel = map(RsoundLevel, LOW_PASS, 1023, 0, 511);
@@ -189,22 +197,26 @@ void analyzeFrequencies() {
 
   // Why FHT_N / 2 ???
   for (int i = 0; i < FHT_N / 2; i++) {
-    if (fht_log_out[i] < FREQ_LOW_PASS) fht_log_out[i] = 0;
+    if (fht_log_out[i] < FREQ_LOW_PASS)
+      fht_log_out[i] = 0;
   }
 
   // низкие частоты, выборка со 2 по 5 тон (0 и 1 зашумленные!)
   for (byte i = 2; i < 6; i++) {
-    if (fht_log_out[i] > colorMusic[0]) colorMusic[0] = fht_log_out[i];
+    if (fht_log_out[i] > colorMusic[0])
+      colorMusic[0] = fht_log_out[i];
   }
 
   // средние частоты, выборка с 6 по 10 тон
   for (byte i = 6; i < 11; i++) {
-    if (fht_log_out[i] > colorMusic[1]) colorMusic[1] = fht_log_out[i];
+    if (fht_log_out[i] > colorMusic[1])
+      colorMusic[1] = fht_log_out[i];
   }
 
   // высокие частоты, выборка с 11 по 31 тон
   for (byte i = 11; i < 32; i++) {
-    if (fht_log_out[i] > colorMusic[2]) colorMusic[2] = fht_log_out[i];
+    if (fht_log_out[i] > colorMusic[2])
+      colorMusic[2] = fht_log_out[i];
   }
 
   // Looking for maximum frequency value in fht_log_out[] within 2..32 index range
@@ -220,18 +232,21 @@ void analyzeFrequencies() {
     }
 
     // ДЛЯ СПЕКТРА ЧАСТОТ (5 режим)
-    if (freq_f[i] < fht_log_out[i + 2]) freq_f[i] = fht_log_out[i + 2];
-    if (freq_f[i] > 0) freq_f[i] -= LIGHT_SMOOTH;
-    else freq_f[i] = 0;
+    if (freq_f[i] < fht_log_out[i + 2])
+      freq_f[i] = fht_log_out[i + 2];
+    if (freq_f[i] > 0)
+      freq_f[i] -= LIGHT_SMOOTH;
+    else
+      freq_f[i] = 0;
   }
 
   // Used in animation
   maxFrequencyValue_f = maxFrequencyValue * averK + maxFrequencyValue_f * (1 - averK);
 
   for (byte i = 0; i < 3; i++) {
-    colorMusic_aver[i] = colorMusic[i] * averK + colorMusic_aver[i] * (1 - averK);  // общая фильтрация
+    colorMusic_aver[i] = colorMusic[i] * averK + colorMusic_aver[i] * (1 - averK); // общая фильтрация
 
-    colorMusic_f[i] = colorMusic[i] * SMOOTH_FREQ + colorMusic_f[i] * (1 - SMOOTH_FREQ);      // локальная
+    colorMusic_f[i] = colorMusic[i] * SMOOTH_FREQ + colorMusic_f[i] * (1 - SMOOTH_FREQ); // локальная
 
     if (colorMusic_f[i] > ((float)colorMusic_aver[i] * MAX_COEF_FREQ)) {
       freqBrightness[i] = 255;
@@ -239,7 +254,8 @@ void analyzeFrequencies() {
       // running_flag[i] = true;
     } // else colorMusicFlash[i] = false;
 
-    if (freqBrightness[i] >= 0) freqBrightness[i] -= FREQ_SMOOTH_STEP;
+    if (freqBrightness[i] >= 0)
+      freqBrightness[i] -= FREQ_SMOOTH_STEP;
 
     if (freqBrightness[i] < EMPTY_BRIGHT) {
       freqBrightness[i] = EMPTY_BRIGHT;
@@ -278,7 +294,7 @@ void getModePacketValue() {
 }
 
 void fhtAnalyzeAudio() {
-  for (int i = 0 ; i < FHT_N ; i++) {
+  for (int i = 0; i < FHT_N; i++) {
     int sample = analogRead(SOUND_R_FREQ);
     fht_input[i] = sample; // put real data into bins
   }

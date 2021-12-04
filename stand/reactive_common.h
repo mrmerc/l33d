@@ -1,4 +1,4 @@
-struct averageCounter{
+struct averageCounter {
   uint16_t *samples;
   uint16_t sample_size;
   uint8_t counter;
@@ -6,15 +6,14 @@ struct averageCounter{
   averageCounter(uint16_t size) {
     counter = 0;
     sample_size = size;
-    samples = (uint16_t*) malloc(sizeof(uint16_t) * sample_size);
+    samples = (uint16_t *)malloc(sizeof(uint16_t) * sample_size);
   }
 
   bool setSample(uint16_t val) {
     if (counter < sample_size) {
       samples[counter++] = val;
       return true;
-    }
-    else {
+    } else {
       counter = 0;
       return false;
     }
@@ -27,7 +26,6 @@ struct averageCounter{
     }
     return (int)(accumulator / sample_size);
   }
-
 };
 
 struct heartbeat_message {

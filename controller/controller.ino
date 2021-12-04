@@ -1,7 +1,7 @@
-#include <FastLED.h>
-#include <ESP8266WiFi.h>
-#include <WiFiUDP.h>
 #include "reactive_common.h"
+#include <ESP8266WiFi.h>
+#include <FastLED.h>
+#include <WiFiUDP.h>
 
 #define READ_PIN A0
 
@@ -20,25 +20,24 @@ bool heartbeats[NUMBER_OF_CLIENTS];
 uint8_t opMode = 6;
 uint8_t prevOpMode = opMode;
 
-#define PARSE_AMOUNT 34  // максимальное количество значений в массиве, который хотим получить
-#define header      '$' // стартовый символ
-#define divider     '#' // разделительный символ
-#define ending      ';' // завершающий символ
+#define PARSE_AMOUNT 34 // максимальное количество значений в массиве, который хотим получить
+#define header '$'      // стартовый символ
+#define divider '#'     // разделительный символ
+#define ending ';'      // завершающий символ
 
 struct LedCommand {
   uint8_t opmode;
   uint8_t data[PARSE_AMOUNT - 1];
 };
 
-uint8_t intData[PARSE_AMOUNT];  // массив численных значений после парсинга
+uint8_t intData[PARSE_AMOUNT]; // массив численных значений после парсинга
 byte parse_index;
 boolean recievedFlag;
 boolean parseStarted;
 boolean settingsEnabled = false;
 String string_convert = "";
 
-void setup()
-{
+void setup() {
   delay(1500);
 
   pinMode(READ_PIN, INPUT);
@@ -63,9 +62,7 @@ void setup()
   }
 }
 
-
-void loop()
-{
+void loop() {
   if (millis() - lastChecked > checkDelay) {
     if (!checkHeartBeats()) {
       waitForConnections();
@@ -101,12 +98,14 @@ int getStaticSoundVolumeValue() {
   int maxLevel = 100;
   byte Rlenght;
 
-  for (int i = 0; i < 200; i++) {                                   // делаем 100 измерений
-    RcurrentLevel = analogRead(READ_PIN);                            // с правого
-    if (RsoundLevel < RcurrentLevel) RsoundLevel = RcurrentLevel;   // ищем максимальное
+  for (int i = 0; i < 200; i++) {         // делаем 100 измерений
+    RcurrentLevel = analogRead(READ_PIN); // с правого
+    if (RsoundLevel < RcurrentLevel)
+      RsoundLevel = RcurrentLevel; // ищем максимальное
   }
 
-  if (RsoundLevel < 50) RsoundLevel = 50;
+  if (RsoundLevel < 50)
+    RsoundLevel = 50;
   RsoundLevel = map(RsoundLevel, 50, 1023, 0, 511);
 
   RsoundLevel = constrain(RsoundLevel, 0, 511);
@@ -160,7 +159,8 @@ int getSoundValue() {
   /* Counter represents how much loop cycles auto-correction will maintain  */
   static byte counter = 0;
   /* Exponential filter values */
-  static float filteredMinValue = 1000; static float filteredMaxValue = 1000;
+  static float filteredMinValue = 1000;
+  static float filteredMaxValue = 1000;
   static float filteredLength = 0;
   const float FILTER_COEFFICIENT = 0.01;
   const float FILTER_LENGTH_COEFFICIENT = 0.2;
@@ -190,9 +190,12 @@ int getSoundValue() {
 
   int ledLength = 140;
 
-  if ((float)adcMaxValue > filteredMaxValue) ledLength = 140;
-  else if ((float)adcMaxValue < filteredMinValue) ledLength = 0;
-  else ledLength = map(adcMaxValue - (int)filteredMinValue, 6, (int)filteredMaxValue - (int)filteredMinValue, 0, 140);
+  if ((float)adcMaxValue > filteredMaxValue)
+    ledLength = 140;
+  else if ((float)adcMaxValue < filteredMinValue)
+    ledLength = 0;
+  else
+    ledLength = map(adcMaxValue - (int)filteredMinValue, 6, (int)filteredMaxValue - (int)filteredMinValue, 0, 140);
 
   ledLength = constrain(ledLength, 0, 140);
 
@@ -215,23 +218,23 @@ int getSoundValue() {
     Serial.println(filteredMaxValue);*/
 
   filteredLength += (float)(ledLength - filteredLength) * FILTER_LENGTH_COEFFICIENT;
-  if (adcMaxValue > filteredMaxValue) filteredLength = 140;
+  if (adcMaxValue > filteredMaxValue)
+    filteredLength = 140;
 
-  if (filteredMaxValue - filteredMinValue > VOL_THR) TEST_VAR = filteredLength;
+  if (filteredMaxValue - filteredMinValue > VOL_THR)
+    TEST_VAR = filteredLength;
   //Serial.println("TEST VAR - " + (String)TEST_VAR);
 
   return TEST_VAR;
 }
 
-void sendLedDataMultiple(uint8_t hue, uint8_t op_mode)
-{
+void sendLedDataMultiple(uint8_t hue, uint8_t op_mode) {
   struct LedCommand send_data;
   //send_data.opmode = op_mode;
   //send_data.data = data;
   send_data.opmode = op_mode;
 
-  for (int i = 0; i < NUMBER_OF_CLIENTS; i++)
-  {
+  for (int i = 0; i < NUMBER_OF_CLIENTS; i++) {
     if (i == 0) {
       send_data.data[0] = HUE_BLUE;
     } else {
@@ -239,13 +242,12 @@ void sendLedDataMultiple(uint8_t hue, uint8_t op_mode)
     }
     IPAddress ip(192, 168, 4, 2 + i);
     UDP.beginPacket(ip, 7001);
-    UDP.write((char*)&send_data, sizeof(struct LedCommand));
+    UDP.write((char *)&send_data, sizeof(struct LedCommand));
     UDP.endPacket();
   }
 }
 
-void sendLedData(uint8_t opMode)
-{
+void sendLedData(uint8_t opMode) {
   struct LedCommand send_data;
   send_data.opmode = opMode;
 
@@ -253,11 +255,10 @@ void sendLedData(uint8_t opMode)
     send_data.data[i - 1] = intData[i];
   }
 
-  for (int i = 0; i < NUMBER_OF_CLIENTS; i++)
-  {
+  for (int i = 0; i < NUMBER_OF_CLIENTS; i++) {
     IPAddress ip(192, 168, 4, 2 + i);
     UDP.beginPacket(ip, 7001);
-    UDP.write((char*)&send_data, sizeof(struct LedCommand));
+    UDP.write((char *)&send_data, sizeof(struct LedCommand));
     UDP.endPacket();
   }
 }
@@ -317,27 +318,26 @@ void packetParsing() {
     char incomingByte = Serial.read();
     //Serial.print(incomingByte);
 
-    if (parseStarted) {                                         // если приняли начальный символ (парсинг разрешён)
-      if (incomingByte != divider && incomingByte != ending) {  // если это не пробел И не конец
-        string_convert += incomingByte;                       // складываем в строку
-      }
-      else {                                                    // если это пробел или ; конец пакета
-        intData[parse_index] = string_convert.toInt();          // преобразуем строку в int и кладём в массив
-        string_convert = "";                                    // очищаем строку
-        parse_index++;                                          // переходим к парсингу следующего элемента массива
+    if (parseStarted) {                                        // если приняли начальный символ (парсинг разрешён)
+      if (incomingByte != divider && incomingByte != ending) { // если это не пробел И не конец
+        string_convert += incomingByte;                        // складываем в строку
+      } else {                                                 // если это пробел или ; конец пакета
+        intData[parse_index] = string_convert.toInt();         // преобразуем строку в int и кладём в массив
+        string_convert = "";                                   // очищаем строку
+        parse_index++;                                         // переходим к парсингу следующего элемента массива
       }
     }
 
-    if (incomingByte == header) {                               // если это $
-      parseStarted = true;                                      // поднимаем флаг, что можно парсить
-      parse_index = 0;                                          // сбрасываем индекс
-    } else if (incomingByte == ending) {                        // если таки приняли ; - конец парсинга
-      parseStarted = false;                                     // сброс
-      recievedFlag = true;                                      // флаг на принятие
+    if (incomingByte == header) {        // если это $
+      parseStarted = true;               // поднимаем флаг, что можно парсить
+      parse_index = 0;                   // сбрасываем индекс
+    } else if (incomingByte == ending) { // если таки приняли ; - конец парсинга
+      parseStarted = false;              // сброс
+      recievedFlag = true;               // флаг на принятие
     }
   }
 
-  if (recievedFlag) {       // если получены данные
+  if (recievedFlag) { // если получены данные
     // Serial.println("Recived: " + String(intData[0]) + "/" + String(intData[1]) + "/" + String(intData[2]));
     recievedFlag = false;
   }
