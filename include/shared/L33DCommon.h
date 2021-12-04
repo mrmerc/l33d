@@ -1,4 +1,12 @@
+#ifndef L33D_COMMON_H
+#define L33D_COMMON_H
+
 #include "Arduino.h"
+
+struct appOption {
+  String key;
+  String value;
+};
 
 struct averageCounter {
   uint16_t *samples;
@@ -34,3 +42,5 @@ struct heartbeat_message {
   uint32_t client_id;
   uint32_t chk;
 };
+
+#endif

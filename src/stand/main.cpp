@@ -4,8 +4,8 @@
 #define FASTLED_ALLOW_INTERRUPTS 0
 #include <ESP8266WiFi.h>
 #include <FastLED.h>
-#include <L33DCommon.h>
 #include <WiFiUDP.h>
+#include <shared/L33DCommon.h>
 
 #define NUM_LEDS 140
 
@@ -31,9 +31,9 @@ float freq_to_stripe = NUM_LEDS / 40; // /2 так как симметрия, и
 
 byte LOW_COLOR = 144; // цвет низких частот
 byte MID_COLOR = 192; // цвет средних
-//byte MID_COLOR = HUE_RED;           // цвет средних
+// byte MID_COLOR = HUE_RED;           // цвет средних
 byte HIGH_COLOR = 114; // цвет высоких
-//byte HIGH_COLOR = HUE_ORANGE;          // цвет высоких
+// byte HIGH_COLOR = HUE_ORANGE;          // цвет высоких
 
 byte HUE_START = 42;
 byte HUE_STEP = 15;
