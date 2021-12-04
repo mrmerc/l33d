@@ -1,0 +1,34 @@
+// AUTOMATICALLY GENERATED FILE. PLEASE DO NOT MODIFY IT MANUALLY
+
+// PIO Unified Debugger
+//
+// Documentation: https://docs.platformio.org/page/plus/debugging.html
+// Configuration: https://docs.platformio.org/page/projectconf/section_env_debug.html
+
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "platformio-debug",
+            "request": "launch",
+            "name": "PIO Debug",
+            "executable": "C:/Users/mercl/Projects/l33d/.pio/build/d1_mini_controller/firmware.elf",
+            "projectEnvName": "d1_mini_controller",
+            "toolchainBinDir": "C:/Users/mercl/.platformio/packages/toolchain-xtensa/bin",
+            "preLaunchTask": {
+                "type": "PlatformIO",
+                "task": "Pre-Debug (d1_mini_controller)"
+            },
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "platformio-debug",
+            "request": "launch",
+            "name": "PIO Debug (skip Pre-Debug)",
+            "executable": "C:/Users/mercl/Projects/l33d/.pio/build/d1_mini_controller/firmware.elf",
+            "projectEnvName": "d1_mini_controller",
+            "toolchainBinDir": "C:/Users/mercl/.platformio/packages/toolchain-xtensa/bin",
+            "internalConsoleOptions": "openOnSessionStart"
+        }
+    ]
+}
